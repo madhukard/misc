@@ -387,7 +387,7 @@ module.exports.server = server;
 		translator.translate(templates.logout.toString(), function(parsedTemplate) {
 			templates.logout = parsedTemplate;
 		});
-		winston.info('NodeBB Ready');
+		winston.info('Node Application Ready');
 		server.listen(nconf.get('PORT') || nconf.get('port'), nconf.get('bind_address'));
 	};
 
