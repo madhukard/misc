@@ -43,7 +43,16 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 * Can you describe your workflow when you create a web page?
 * Can you describe the difference between progressive enhancement and graceful degradation?
   * Bonus points for describing feature detection
+
+  [Answer]
+  * Progressive enhancement is starting from a baseline and then building enhancements for new browser tech on top.
+  * Graceful degradation is starting with designing the most optimal browser experience, then designing fallbacks for older browsers.
+  * Some methods for doing this are media queries, javascript polyfills and javascript detection libraries like Modernizr
+
 * Explain what "Semantic HTML" means.
+
+
+
 * How would you optimize a websites assets/resources?
   * Looking for a number of solutions which can include:
     * File concatenation
@@ -51,8 +60,14 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * CDN Hosted
     * Caching
     * etc.
+
+
+
 * Why is it better to serve site assets from multiple domains?
   * How many resources will a browser download from a given domain at a time?
+
+
+
 * Name 3 ways to decrease page load. (perceived or actual load time)
 * If you jumped on a project and they used tabs and you used spaces, what would you do?
   * Suggest the project utilize something like EditorConfig (http://editorconfig.org)
