@@ -143,12 +143,14 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * The requested webpage executes javascript which requests a file from the server at regular intervals (e.g. 0.5 seconds).
     * The server calculates each response and sends it back, just like normal http traffic.
 
+    ```html 
     setInterval(function(){
         $.ajax({ url: "server", success: function(data){
             //Update your dashboard gauge
             salesGauge.setValue(data.value);
         }, dataType: "json"});
     }, 30000);
+    ```
 
   AJAX Long-Polling:
 
@@ -158,12 +160,14 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * When there's new information available, the server responds with the new information.
     * The client receives the new information and immediately sends another request to the server, re-starting the process.
 
+    ```html 
     (function poll(){
       $.ajax({ url: "server", success: function(data){
         //Update your dashboard gauge
         salesGauge.setValue(data.value);
       }, dataType: "json", complete: poll, timeout: 30000 });
     })();
+    ```
 
   HTML5 Server Sent Events (SSE) / EventSource:
 
@@ -343,30 +347,182 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
 * Describe what a "reset" CSS file does and how it's useful.
 
+  * A CSS reset is a set of styles you load prior to your other styles, to remove browser built-in styles.
+  * If these styles are not "reset", you will see unwanted styles/effects and things breaking. Its always recommended to "reset" the browser's styles.
+
+
 * Describe Floats and how they work.
+
+  * Float is a CSS positioning property.
+  * float: Left, Right, None, Inherit
+  * Aside from the simple example of wrapping text around images, floats can be used to create entire web layouts
+
 
 * What are the various clearing techniques and which is appropriate for what context?
 
+  * If you are in a situation where you always know what the succeeding element is going to be, you can apply the clear: both; value to that element and go about your business.
+  
+  * The Empty Div Method is, quite literally, an empty div. <div style="clear: both;"></div>.
+  
+  * The Overflow Method relies on setting the overflow CSS property on a parent element. If this property is set to auto or hidden on the parent element, the parent will expand to contain the floats, effectively clearing it for succeeding elements. 
+  
+  * The Easy Clearing Method uses a clever CSS pseudo selector (:after) to clear floats. Rather than setting the overflow on the parent, you apply an additional class like "clearfix" to it. Then apply this CSS:
+    
+    ```html
+    .clearfix:after { 
+       content: "."; 
+       visibility: hidden; 
+       display: block; 
+       height: 0; 
+       clear: both;
+    }
+    ```
+
 * Explain CSS sprites, and how you would implement them on a page or site.
+
+  * An image sprite is a collection of images put into a single image.
+
+  * A web page with many images can take a long time to load and generates multiple server requests.
+
+  * Using image sprites will reduce the number of server requests and save bandwidth.
+
+  * Using SpriteMe
+    * SpriteMe is a bookmarklet. So after you've put it up in your bookmarks bar, just go to any website and click it. It will open up an overlay over the right side of your screen
+
 
 * What are your favourite image replacement techniques and which do you use when?
 
+  * CSS image replacement is a technique of replacing a text element (usually a header tag) with an image
+
+  * An example of this would be including a logo on a page. You may want to use a h1 tag and text for this for the accessibility and SEO benefits, but ideally you'd like to show your logo, not text.
+
+  * FIR or "Fahrner Image Replacement
+
+    ```html 
+      HTML
+      <h1 id="technique-one">
+        <span>CSS-Tricks</span>
+      </h1>
+    ```
+
+    ```html 
+    CSS
+
+    h1#technique-one {
+      width: 250px;
+      height: 25px;
+      background-image: url(logo.gif);
+    }
+    h1#technique-one span {
+      display: none;
+    }
+
+    ```
+
+
+  * Phark Method
+
+    ```html 
+      HTML
+      <h1 class="technique-three">
+        CSS-Tricks
+      </h1>
+    ```
+
+    ```html 
+    CSS
+
+    h1.technique-three {
+      width: 350px; 
+      height: 75px;
+      background: url("images/header-image.jpg");
+      text-indent: -9999px;
+    }
+
+    ```  
+
+
 * CSS property hacks, conditionally included .css files, or... something else?
+
+  * ??
+
+
 
 * How do you serve your pages for feature-constrained browsers?
   * What techniques/processes do you use?
 
+  * Progressive Enhancement
+  * Graceful Degradation
+
+
 * What are the different ways to visually hide content (and make it available only for screen readers)?
+  
+  ```html
+  .hide {
+   display: none;
+  }
+  ```
+
+  TO available for screen readers
+
+  ```html 
+    .hide {
+       position: absolute !important;
+       top: -9999px !important;
+       left: -9999px !important;
+    }
+  ```
+
 
 * Have you ever used a grid system, and if so, what do you prefer?
 
+  * Bootstrap Grid System
+
 * Have you used or implemented media queries or mobile specific layouts/CSS?
+
+  * Yes for Android phonegap application
+
 
 * Any familiarity with styling SVG?
 
+  * Add SVG node to DOM node and Apply CSS
+
+
 * How do you optimize your webpages for print?
+  
+  * Create A Stylesheet For Print
+  * Avoid Unnecessary HTML Tables
+  * Hiding Needless Element For Print
+  * Size Page For Print
+  * Use Page Break
+
 
 * What are some of the "gotchas" for writing efficient CSS?
+
+    * Use efficient CSS selectors
+      
+      * Avoid a universal key selector.
+        * Allow elements to inherit from ancestors, or use a class to apply a style to multiple elements.
+      
+      * Make your rules as specific as possible. 
+        * Prefer class and ID selectors over tag selectors.
+      
+      * Remove redundant qualifiers. 
+        
+        These qualifiers are redundant:
+          * ID selectors qualified by class and/or tag selectors
+          * Class selectors qualified by tag selectors (when a class is only used for one tag, which is a good design practice anyway).
+    
+
+      * Avoid using descendant selectors, especially those that specify redundant ancestors.
+          * For example, the rule body ul li a {...} specifies a redundant body selector, since all elements are descendants of the body tag.
+    
+      * Use class selectors instead of descendant selectors.
+    
+    * Avoid CSS expressions
+    
+    * Put CSS in the document head
+
 
 * What are the advantages/disadvantages of using CSS preprocessors? (SASS, Compass, Stylus, LESS)
   * If so, describe what you like and dislike about the CSS preprocessors you have used.
@@ -374,15 +530,70 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 * How would you implement a web design comp that uses non-standard fonts?
   * Webfonts (font services like: Google Webfonts, Typekit etc.)
 
+
+
 * Explain how a browser determines what elements match a CSS selector?
+
+    * As the browser parses HTML, it constructs an internal document tree representing all the elements to be displayed. 
+    * It then matches elements to styles specified in various stylesheets, according to the standard CSS cascade, inheritance, and ordering rules. In Mozilla's implementation (and probably others as well), for each element, the CSS engine searches through style rules to find a match. 
+    * The engine evaluates each rule from right to left, starting from the rightmost selector (called the "key") and moving through each selector until it finds a match or discards the rule. 
+    * (The "selector" is the document element to which the rule should apply.)
+
 
 * Explain your understanding of the box model and how you would tell the browser in CSS to render your layout in different box models.
 
+  * All HTML elements can be considered as boxes. In CSS, the term "box model" is used when talking about design and layout.
+
+  * The CSS box model is essentially a box that wraps around HTML elements, and it consists of: margins, borders, padding, and the actual content.
+
+  * When you set the width and height properties of an element with CSS, you just set the width and height of the content area. To calculate the full size of an element, you must also add the padding, borders and margins.
+
+  * The box-sizing CSS property is used to alter the default CSS box model used to calculate widths and heights of elements.
+    * box-sizing: content-box | padding-box | border-box
+
+  * When you set box-sizing: border-box; on an element, the padding and border of that element no longer increase its width
+
 * List as many values for the display property that you can remember.
 
+  * none
+    * Setting display to none will render the page as though the element does not exist. visibility: hidden; will hide the element, but the element will still take up the space it would if it was fully visible
+
+  * inline
+    * An inline element can wrap some text inside a paragraph <span> like this </span> without disrupting the flow of that paragraph
+  
+  * block 
+    * A block-level element starts on a new line and stretches out to the left and right as far as it can. Other common block-level elements are p and form, and new in HTML5 are header, footer, section, and more. 
+
 * What's the difference between inline and inline-block?
+  
+  * inline-block elements are like inline elements but they can have a width and height.
+
 
 * What's the difference between a relative, fixed, absolute and statically positioned element?
+
+  * http://learnlayout.com/toc.html
+
+  * static
+
+    * An element with position: static; is not positioned in any special way
+
+
+  * relative
+
+    * relative behaves the same as static unless you add some extra properties.
+    * Setting the top, right, bottom, and left properties of a relatively-positioned element will cause it to be adjusted away from its normal position. 
+    * Other content will not be adjusted to fit into any gap left by the element.
+
+  * fixed
+
+    * A fixed element is positioned relative to the viewport, which means it always stays in the same place even if the page is scrolled. 
+    * As with relative, the top, right, bottom, and left properties are used
+
+  * Absolute
+
+    * Absolute behaves like fixed except relative to the nearest positioned ancestor instead of relative to the viewport. 
+    * If an absolutely-positioned element has no positioned ancestors, it uses the document body, and still moves along with page scrolling
+    
 
 ####[[⬆]](#toc) <a name='js'>JS Questions:</a>
 
