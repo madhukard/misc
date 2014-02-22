@@ -66,9 +66,9 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
   
   * A semantic element clearly describes its meaning to both the browser and the developer.
 
-  * Examples of non-semantic elements: <div> and <span> - Tells nothing about its content.
+  * Examples of non-semantic elements: div and span - Tells nothing about its content.
 
-  * Examples of semantic elements: <form>, <table>, and <img> - Clearly defines its content.
+  * Examples of semantic elements: form, table, and img - Clearly defines its content.
 
 * How would you optimize a websites assets/resources?
   * Looking for a number of solutions which can include:
@@ -118,9 +118,8 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
 
 * What tools do you use to test your code's performance?
-  * Profiler, JSPerf, Dromaeo
 
-  ??
+  * Compuware APM AJAX Edition offers the most advanced deep-dive web performance diagnostics into JavaScript execution, DOM access, rendering activities and network traffic for analyzing and troubleshooting web applications. Quickly trace and profile web apps to understand performance characteristics, identify hotspots and isolate performance problems in Internet Explorer and Firefox
 
 * If you could master one technology this year, what would it be?
 
@@ -144,6 +143,13 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * The requested webpage executes javascript which requests a file from the server at regular intervals (e.g. 0.5 seconds).
     * The server calculates each response and sends it back, just like normal http traffic.
 
+    setInterval(function(){
+        $.ajax({ url: "server", success: function(data){
+            //Update your dashboard gauge
+            salesGauge.setValue(data.value);
+        }, dataType: "json"});
+    }, 30000);
+
   AJAX Long-Polling:
 
     * A client requests a webpage from a server using regular http (see http above).
@@ -151,6 +157,13 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * The server does not immediately respond with the requested information but waits until there's new information available.
     * When there's new information available, the server responds with the new information.
     * The client receives the new information and immediately sends another request to the server, re-starting the process.
+
+    (function poll(){
+      $.ajax({ url: "server", success: function(data){
+        //Update your dashboard gauge
+        salesGauge.setValue(data.value);
+      }, dataType: "json", complete: poll, timeout: 30000 });
+    })();
 
   HTML5 Server Sent Events (SSE) / EventSource:
 
@@ -189,7 +202,11 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
   * The basic solution to handle FOUC is to keep it hidden until it has been properly styled.
 
-  * I assume that you have control over the content that is displayed unstyled? In that case, wrap it in a <div id="some-div" style="display:none">... content ... </div>. Then use jQuery to show it when the entire document is ready:
+  * I assume that you have control over the content that is displayed unstyled? In that case, wrap it in a 
+      ```html 
+      <div id="some-div" style="display:none">... content ... </div>.  
+      ```
+      Then use jQuery to show it when the entire document is ready:
 
   * $(function() { $("#some-div").show(); });
 
