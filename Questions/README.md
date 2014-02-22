@@ -50,9 +50,15 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 * Can you describe the difference between progressive enhancement and graceful degradation?
   * Bonus points for describing feature detection
 
-  * Progressive enhancement is starting from a baseline and then building enhancements for new browser tech on top.
-  * Graceful degradation is starting with designing the most optimal browser experience, then designing fallbacks for older browsers.
-  * Some methods for doing this are media queries, javascript polyfills and javascript detection libraries like Modernizr
+    * Graceful degradation
+      * It is the practice of building a web site or application so it provides a good level of user experience in modern browsers. However, it will degrade gracefully for those using older browsers. The system may not be as pleasant or as pretty, but the basic functionality will work on older systems.
+      * If you start with the most modern, cutting edge features, and then scale back, you're using graceful degradation.
+
+    * Progressive enhancement 
+      * The web site or application would establish a base-level of user experience for most browsers. More advanced functionality would then be added when a browser supports it.
+      * If you start with the lowest common denominator and then add features for more modern browsers for your web pages, you're using progressive enhancement
+
+    * Some methods for doing this are media queries, javascript polyfills and javascript detection libraries like Modernizr
 
 * Explain what "Semantic HTML" means.
 
