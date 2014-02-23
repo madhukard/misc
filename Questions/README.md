@@ -886,7 +886,7 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 * Explain how JSONP works (and how it's not really AJAX)
 
       * JSONP stands for JSON with padding. 
-      * Under the same origin policy (SOP), JavaScript code loaded from one domain is not allowed to fetch data from another domain. However, this restriction does not apply to the <script> tag, which can specify a URL of JavaScript code to load from a remote server in a src attribute. 
+      * Under the same origin policy (SOP), JavaScript code loaded from one domain is not allowed to fetch data from another domain. However, this restriction does not apply to the ```javascript<script>``` tag, which can specify a URL of JavaScript code to load from a remote server in a src attribute. 
       * This was used to work around the SOP limitations by pointing the src to a web service returning dynamically generated JavaScript code (JSONP), instead of JSON data. 
       * Because the code is loaded by the <script> tag, it can be normally executed and return the desired data block, thus bypassing SOP.
 
