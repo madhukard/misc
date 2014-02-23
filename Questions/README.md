@@ -350,11 +350,14 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
   * A CSS reset is a set of styles you load prior to your other styles, to remove browser built-in styles.
   * If these styles are not "reset", you will see unwanted styles/effects and things breaking. Its always recommended to "reset" the browser's styles.
 
+  * A CSS reset is used to create a baseline set of styles that will display the same across browsers.
+
 
 * Describe Floats and how they work.
 
   * Float is a CSS positioning property.
   * float: Left, Right, None, Inherit
+  * Elements can be floated left or right, elements after the float will then wrap around it (unless the clear property is applied to the element).
   * Aside from the simple example of wrapping text around images, floats can be used to create entire web layouts
 
 
@@ -459,6 +462,9 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
   * Graceful Degradation
 
 
+  * First, its important to take a look at any analytics you can to see what browsers and devices your users are using. Next of course, it depends on the content. I've used various approaches (graceful degradation, progressive enhancement, mobile first). I like the responsive web design approach of primarily using media queries. Also doing feature detection (usually with Modernizr) combined with polyfills.
+
+
 * What are the different ways to visually hide content (and make it available only for screen readers)?
   
   ```html
@@ -476,6 +482,9 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
        left: -9999px !important;
     }
   ```
+
+
+  * Some people have used text-indent or absolute positioning to move the content off the page, but the favorable approach is to use clip: rect(1px, 1px, 1px, 1px); along with some other properties
 
 
 * Have you ever used a grid system, and if so, what do you prefer?
@@ -537,6 +546,11 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
 
 * Explain how a browser determines what elements match a CSS selector?
+
+    * Browsers read CSS from right to left. 
+    * The less rules the browser has to evaluate, the faster the styling engine will perform.
+
+    * To resolve conflicts between rules applying to the same element, browsers follow a set of rules to determine which selector is more specific (CSS Specificity). There is a weighted point system, where element selectors are 1 point, class selectors are 10 points and ID selectors are 100 points. In the case of 2 equally weighted selectors, the last rule is the one that gets followed.
 
     * As the browser parses HTML, it constructs an internal document tree representing all the elements to be displayed. 
     * It then matches elements to styles specified in various stylesheets, according to the standard CSS cascade, inheritance, and ordering rules. In Mozilla's implementation (and probably others as well), for each element, the CSS engine searches through style rules to find a match. 
