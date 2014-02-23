@@ -362,8 +362,12 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
   * If you are in a situation where you always know what the succeeding element is going to be, you can apply the clear: both; value to that element and go about your business.
   
-  * The Empty Div Method is, quite literally, an empty div. <div style="clear: both;"></div>.
-  
+  * The Empty Div Method is, quite literally, an empty div. 
+
+      ```html
+      <div style="clear: both;"></div>.
+      ```
+
   * The Overflow Method relies on setting the overflow CSS property on a parent element. If this property is set to auto or hidden on the parent element, the parent will expand to contain the floats, effectively clearing it for succeeding elements. 
   
   * The Easy Clearing Method uses a clever CSS pseudo selector (:after) to clear floats. Rather than setting the overflow on the parent, you apply an additional class like "clearfix" to it. Then apply this CSS:
@@ -593,75 +597,470 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
     * Absolute behaves like fixed except relative to the nearest positioned ancestor instead of relative to the viewport. 
     * If an absolutely-positioned element has no positioned ancestors, it uses the document body, and still moves along with page scrolling
-    
+
 
 ####[[⬆]](#toc) <a name='js'>JS Questions:</a>
 
 * Explain event delegation
+
+    * Event delegation allows you to avoid adding event listeners to specific nodes;  instead, the event listener is added to one parent.  
+    * That event listener analyzes bubbled events to find a match on child elements.
+    * Event delegation allows us to attach a single event listener, to a parent element, that will fire for all children matching a selector, whether those children exist now or are added in the future
+
 * Explain how `this` works in JavaScript
+
+    * Every line of JavaScript code is run in an “execution context.” 
+
+    * The JavaScript runtime environment maintains a stack of these contexts, and the top execution context on this stack is the one that’s actively running.
+
+    * There are three types of executable code: Global code, function code, and eval code.
+
+
+    * The object that this refers to is redetermined every time control enters a new execution context and remains fixed until control shifts to a different context. 
+
+    * The value of this is dependent upon two things: The type of code being executed (i.e., global, function, or eval) and the caller of that code
+
+
+    * By default, this refers to the global object.
+    * When a function is called as a property on a parent object, this refers to the parent object inside that function.
+    * When a function is called with the new operator, this refers to the newly created object inside that function.
+    * When a function is called using call or apply, this refers to the first argument passed to call or apply. If the first argument is null or not an object, this refers to the global object.
+
+
 * Explain how prototypal inheritance works
+
+    * In most languages, there are classes and objects. Classes inherit from other classes.
+
+    * In JavaScript, the inheritance is prototype-based. That means that there are no classes. Instead, an object inherits from another object 
+
+    * When accessing the properties of an object, JavaScript will traverse the prototype chain upwards until it finds a property with the requested name.
+
+
+        ```html
+          function Foo() {
+              this.value = 42;
+          }
+          Foo.prototype = {
+              method: function() {}
+          };
+
+          function Bar() {}
+
+          // Set Bar's prototype to a new instance of Foo
+          Bar.prototype = new Foo();
+          Bar.prototype.foo = 'Hello World';
+
+          // Make sure to list Bar as the actual constructor
+          Bar.prototype.constructor = Bar;
+
+          var test = new Bar(); // create a new bar instance
+
+          // The resulting prototype chain
+          test [instance of Bar]
+              Bar.prototype [instance of Foo]
+                  { foo: 'Hello World' }
+                  Foo.prototype
+                      { method: ... }
+                      Object.prototype
+                          { toString: ... /* etc. */ }
+
+      ```
+
+
+    * In the code above, the object test will inherit from both Bar.prototype and Foo.prototype; hence, it will have access to the function method that was defined on Foo. 
+    * It will also have access to the property value of the one Foo instance that is its prototype. 
+    * It is important to note that new Bar() does not create a new Foo instance, but reuses the one assigned to its prototype; thus, all Bar instances will share the same value property.
+
+
 * How do you go about testing your JavaScript?
+
+    * Using QUnit - developed by jQuery team.
+
+
+
 * AMD vs. CommonJS?
+
+    * AMD - Asynchronous Module Definition
+
+      * Simple, flexible module format
+      * Forward compatibility w/ ES.Next / Harmony modules (via translation)
+      * Designed with browser environment in mind
+      * Designed to accommodate asynchronous loading
+      * AMD plugins can load other types of resources, such as images, html templates, css, localized language/strings files, etc. 
+      * Module types - objects, functions, constructors, string, JSON, numbers, dates.
+
+          ```html
+          Module format
+          // MyApp/MyModule:
+          define(
+
+            ['pkgA/modA', 'pkgA/modB', 'pkgZ/modC'],
+
+            function (modA, modB, modC) {
+
+              var myModule = {
+                doStuff: function() { ... }
+              }
+
+              return myModule;
+            }
+          );     
+
+          ```
+
+    * CommonJS
+
+      * require, module, and exports
+      * assumes sync
+      * Module types - objects
+
+        ```html
+        var modA = require('pkgA/modA');
+        var modB = require('pkgA/modB');
+        var modC = require('pkgZ/modC');
+
+        function doStuff() { ... }
+
+        exports.doStuff = doStuff;
+
+        ```
+
+
+
 * What's a hashtable?
+
+  * A hashtable is an associative array of key/value pairs. JavaScript Objects are hashtables.
+
+
+
 * Explain why the following doesn't work as an IIFE: `function foo(){ }();`. 
   * What needs to be changed to properly make it an IIFE?
+
+
+    * Immediately-Invoked Function Expression (IIFE)
+    * Function Expression - var test = function() {};
+    * Function Declaration - function test() {};
+    * A function expression can be called (invoked) immediately by using a set of parentheses, but a function declaration cannot be.
+    * By wrapping the anonymous function inside of parentheses, the JavaScript parser knows to treat the anonymous function as a function expression instead of a function declaration. 
+
+      ```html
+      ( // evaluate the function inside the parentheses
+      function() {}
+      ) // and return the function object
+      () // call the result of the evaluation
+
+      ```
+
+    * There are other ways to evaluate and directly call the function expression which, while different in syntax, behave the same way.
+
+      ```html
+      // A few other styles for directly invoking the 
+      !function(){}()
+      
+      +function(){}()
+      
+      (function(){}());
+      
+      (function(){ }()); // Crockford recommends this one
+      
+      var i = function(){ return 10; }();
+
+      true && function(){ /* code */ }();
+
+      // and so on...
+
+      ```
+
 * What's the difference between a variable that is: `null`, `undefined` or `undeclared`?
   * How would you go about checking for any of these states?
+
+    * null is a JavaScript keyword that indicates the absence of a value. 
+    * undeclared vars have not been declared by a var statement. 
+    * undefined vars have been declared but have no value.
+
+    * In JavaScript, “undefined” is a global variable (a property of the global object), that is created at run time. 
+    * This global variable represents something  that has not been initialized, as well as an object property or array index that does not exist. Also, when you do not supply an argument for a function parameter, it will have the value of “undefined”. 
+    * Furthermore, when a function does not return a value, it returns “undefined”
+
+
 * What is a closure, and how/why would you use one?
+
+    * Closures provide a means of putting function definitions and expressions inside of other functions. A common use would be binding event handler functions so that 'this' refers to the event object.
+
+
 * What's a typical use case for anonymous functions?
+
+    * For single use methods, like when you need to pass a one-liner of code to another function. Or when you want to scope vars via a closure
+
 * Explain the "JavaScript module pattern" and when you'd use it.
   * Bonus points for mentioning clean namespacing.
   * What if your modules are namespace-less?
+
+
+    * The module pattern is a way of organizing and encapsulating code via a closure. 
+    * It allows you to create public/private functions and vars inside an object (the module). 
+    * It lessens the likelihood of naming conflicts and unintended interactions with other functions/vars on the page. 
+    * Modules should work independently and be easily extensible. 
+    * Using modules enables to write widgets and plugins that interact with each other.
+
+
 * How do you organize your code? (module pattern, classical inheritance?)
+
+    * I like using the Module Pattern quite a bit. Whenever possible, I like to widgetize/pluginize my code.
+    * $.class & OSGI plugin
+
+
 * What's the difference between host objects and native objects?
+  
+    * Native Objects are objects/methods that exist in the ECMAScript spec (Date, Math, String methods, etc.) 
+
+    * Host Objects are created by the environment (window, history, getElementByID, etc.) or ones you create yourself.
+
+
 * Difference between: `function Person(){}`, `var person = Person()`, and `var person = new Person()`?
+
+    * First one executes function & returns undefined
+    * Second one creates new object and call Person function as constructor and returns new object created.
+
 * What's the difference between `.call` and `.apply`?
+
+    * .apply and .call do the same thing, but .apply uses an array containing arguments for the target method as the second parameter.
+
 * explain `Function.prototype.bind`?
+
+    * Use this to create functions that when called have a particular value for this and therefore binding it to the original value of the target object
+
 * When do you optimize your code?
+  
+    * All the time, from the beginning structure, to refactoring along the way, to re-evaluating at the end.
+
 * Can you explain how inheritance works in JavaScript?
+
+    * JavaScript does not have classes - it uses prototypal inheritance
+
+
 * When would you use `document.write()`?
   * Most generated ads still utilize `document.write()` although its use is frowned upon
+
+
+    Pro:
+    * It's the easiest way to embed inline content from an external (to your host/domain) script.
+    * You can overwrite the entire content in a frame/iframe.
+
+
+    Con:
+    * It serializes the rendering engine to pause until said external script is loaded, which could take much longer than an internal script.
+    * It is usually used in such a way that the script is placed within the content, which is considered bad-form.
+
+
+    * It can block your page
+
+      document.write only works while the page is loading; If you call it after the page is done loading, it will overwrite the whole page -- the effectively means you have to call it from an inline script block. And that will prevent the browser from processing parts of the page that follow. Scripts and Images will not be downloaded until the writing block is finished.
+
+
 * What's the difference between feature detection, feature inference, and using the UA string
+
+      * Using feature detection over user agent detection is favored because devices and device features are constantly changing and therefore it is better to design behavior based on whether particular features are present or not. For example, by using Modernizr or yepnope.
+
+
 * Explain AJAX in as much detail as possible
+
+
+      * AJAX is used for asynchonously sending and receiving data without interfering with any processes occuring on the page. It is used for things like form submission, loading dynamic content assets and user interaction like chat rooms and multiplayer games. When data is returned from a server, a callback function is then executed that handles the data. AJAX stands for Asynchronous JavaScript and XML, which has become a bit outdated as most are using JSON these days. But, AJAJ just doesn’t have as nice a ring to it though.
+
+
 * Explain how JSONP works (and how it's not really AJAX)
+
+      * JSONP stands for JSON with padding. 
+      * Under the same origin policy (SOP), JavaScript code loaded from one domain is not allowed to fetch data from another domain. However, this restriction does not apply to the <script> tag, which can specify a URL of JavaScript code to load from a remote server in a src attribute. 
+      * This was used to work around the SOP limitations by pointing the src to a web service returning dynamically generated JavaScript code (JSONP), instead of JSON data. 
+      * Because the code is loaded by the <script> tag, it can be normally executed and return the desired data block, thus bypassing SOP.
+
 * Have you ever used JavaScript templating?
   * If so, what libraries have you used? (Mustache.js, Handlebars etc.)
+
+    * jQuery template, jade, swig
+
+
+
 * Explain "hoisting".
+    
+    * Hoisting is a feature in JavaScript where var declarations are moved to the top of the function body. 
+    * However, the initialization/assignment of the var is not. 
+
+
+
 * Describe event bubbling.
+
+    * Events are dispatched first at the event target, then propagate up through the target element's parent and ancestors, 'bubbling' all the way up to the document root.
+
+
 * What's the difference between an "attribute" and a "property"?
+
+    * An attribute carries information about an element in the form of a key value pair.
+    * A property is the key portion of that attribute.
+
+
 * Why is extending built in JavaScript objects not a good idea?
+
+    * The main reason not to do it is to avoid conflicts - for example, if two different scripts are extending an object in an incompatible way. If every JS library out there started extending object prototypes, it would create a huge mess. It is best to leave the built-ins alone, as that way everyone knows their expected behavior and there are no surprises down the road.
+
+
 * Why is extending built ins a good idea?
+
+    * The temptation is that by extending a native object, you can quickly bring useful functionality to JS prototypes, like Array or String. But that quick solution can lead to big headaches later on. Are there any good use cases? Some say a worthy use would be making polyfills for older browsers to bring them up to the latest EcmaScript standards, yet even that seems open to causing trouble. Best steer clear. There be dragons.
+
+
 * Difference between document load event and document ready event?
+
+    * The ready event occurs after the HTML document has been loaded, 
+    * while the onload event occurs later, when all content (e.g. images) also has been loaded.
+
+
+    * The onload event is a standard event in the DOM, while the ready event is specific to jQuery. 
+    * The purpose of the ready event is that it should occur as early as possible after the document has loaded, so that code that adds funcionality to the elements in the page doesn't have to wait for all content to load.
+
+
 * What is the difference between `==` and `===`?
+
+    * === is strictly equal, while == allows for truthiness, where the objects being compared are equal after type coercion. For example, 1=="1" is true, but 1==="1" is false.
+
+
 * Explain how you would get a query string parameter from the browser window's URL.
+
+
+    * query  = window.location.search.substring(1)
+
+
+    ```javascript
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    ```
+
 * Explain the same-origin policy with regards to JavaScript.
-* Describe inheritance patterns in JavaScript.
+
+    * A script can read only the properties of windows and documents that are loaded from the same host, through the same port, and by the same protocol as the script itself. ([source])
+
+
 * Make this work:
 ```javascript
 [1,2,3,4,5].duplicate(); // [1,2,3,4,5,1,2,3,4,5]
 ```
+
+    ```javascript
+      Array.prototype.duplicator = function() {
+          return this.concat(this);
+      }
+    ```
+    
+
 * Describe a strategy for memoization (avoiding calculation repetition) in JavaScript.
+
+
+     * The standard way to do it is to create a memoization function that creates a cache object for calculations. You then pass calculations into the function, which checks if it already exists in the cache. If it does, it returns the result without having to actually perform the calculation. If the calculation doesn't exist in the cache, it performs and returns the calculation, then also stores it in the cache object for next time.
+
+
 * Why is it called a Ternary expression, what does the word "Ternary" indicate?
+
+    * Ternary indicates an inline if statement, comprised of 3 parts. The first is a boolean expression. The second is an expression that is returned if the boolean is true. The third is an expression returned if the boolean is false
+
+
 * What is the arity of a function?
+
+    * The arity property used to return the number of arguments expected by the function, however, it no longer exists and has been replaced by the Function.prototype.length property.
+
+
 * What is `"use strict";`? what are the advantages and disadvantages to using it?
+
+    * Strict Mode is a new feature in ECMAScript 5 that allows you to place a program, or a function, in a "strict" operating context. This strict context prevents certain actions from being taken and throws more exceptions.
+
+    * Strict mode helps out in a couple ways:
+
+      It catches some common coding bloopers, throwing exceptions.
+      It prevents, or throws errors, when relatively "unsafe" actions are taken (such as gaining access to the global object).
+      It disables features that are confusing or poorly thought out.
+
 
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
 
 * Explain "chaining".
+
+    * jQuery methods return an object, therefore making it possible to run sequential methods on the same jQuery object. This results in shorter, cleaner code that runs faster because it reduces interaction with the DOM.
+
+
 * Explain "deferreds".
+
+    * A jQuery Deferred Object is used to manage callbacks based on success and failure of other functions. It is primarily used for handling ajax requests that require flexible or complex state management. Multiple callbacks can be attached to a single deferred object in a chain, with methods like deferred.then() deferred.done() and deferred.fail(). Callbacks can even be bound after the event dispatch has occured.
+
+
 * What are some jQuery specific optimizations you can implement?
+
+    * Use chaining as much as possible. Optimize selectors (for example using .find() rather than context). 
+    * Cache selectors that get run more than once. Use .on() assigned to a parent element, rather than binding lots of event listeners to child elements. 
+    * Reduce the amount of DOM manipulation (for example, if you are building a list, instead of using multiple .append() calls to a <ul> element, instead build all the <li> elements as a string and use .append() just once).
+
 * What does `.end()` do?
+
+    * You use .end() when chaining methods to revert back to a previous selected group of elements. For example, if you do a .find() and then .end(), it reverts the selector back to its state before the .find() was executed. It enables you to do less DOM lookups.
+
+
 * How, and why, would you namespace a bound event handler?
+
+    * You would namespace an event handler if you want to refer to a specific event handler for triggering or removal (for example, you could have multiple click event handlers bound to an element, but only want to remove one of them).
+
+
 * Name 4 different values you can pass to the jQuery method.
-  * Selector (string), HTML (string), Callback (function), HTMLElement, object, array, element array, jQuery Object etc.
+  
+    * Selector (string), HTML (string), Callback (function), HTMLElement, object, array, element array, jQuery Object etc.
+
+
 * What is the effects (or fx) queue?
+
+    * It is jQuery’s library for animation.
+
+
 * What is the difference between `.get()`, `[]`, and `.eq()`?
+
+    * eq() returns a jQuery object
+    * get() returns a DOM element.
+
+
 * What is the difference between `.bind()`, `.live()`, and `.delegate()`?
+
+    * Did you know that the jQuery .bind(), .live(), and .delegate() methods are just one line pass throughs to the new jQuery 1.7 .on() method? The same is true of the .unbind(), .die(), and .undelegate() methods.
+
+
 * What is the difference between `$` and `$.fn`? Or just what is `$.fn`.
+
+    * $ is a function (specifically, a variable pointing to the jQuery function — an alias). 
+    * $.fn is a property on that function, which points to the prototype of the internal init function jQuery uses to create instances, as we can see in the jQuery code:
+
+        jQuery.fn.init.prototype = jQuery.fn;
+
+
+    * $.fn is there so that it's easy to add properties to it. When you create jQuery objects, they have those properties, because of JavaScript's prototypical inheritance. The most common properties to add to it are, of course, functions that do things (jQuery plug-ins).
+
+    definition:
+
+    $.fn.myPlugin = function(){...}
+
+    usage:
+
+    $(selector).myPlugin();
+
+
 * Optimize this selector:
 ```javascript
 $(".foo div#bar:eq(0)")
 ```
+
+    * $('#bar')
+
 
 ####[[⬆]](#toc) <a name='jscode'>Code Questions:</a>
 
