@@ -613,6 +613,44 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * If an absolutely-positioned element has no positioned ancestors, it uses the document body, and still moves along with page scrolling
 
 
+* Create overlay & model dialog
+
+    ```html
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style type="text/css">
+          .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, .5);
+          }
+
+          .modal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            background-color: #f1c40f;
+            border-radius: 5px;
+            width: 417px;
+            height: 100px;
+            margin: 0 0 0 -140px;
+            line-height: 100px;
+            text-align: center;
+          }
+        </style>
+        </head>
+        <body>
+        <div class="overlay">
+          <div class="modal">I'm the modal window! </div>
+        </div>
+        </body>
+        </html>
+    ```
+
 ####[[⬆]](#toc) <a name='js'>JS Questions:</a>
 
 * Explain event delegation
@@ -998,6 +1036,75 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
       It catches some common coding bloopers, throwing exceptions.
       It prevents, or throws errors, when relatively "unsafe" actions are taken (such as gaining access to the global object).
       It disables features that are confusing or poorly thought out.
+
+
+* Javascript Currying
+
+    * Filling in the first couple arguments of a function (and returning a new function) is typically called currying. 
+
+      ```javascript
+        Function.prototype.curry = function() {
+          var fn = this, args = Array.prototype.slice.call(arguments);
+          return function() {
+            return fn.apply(this, args.concat(
+              Array.prototype.slice.call(arguments)));
+          };
+        };
+
+      ```
+
+
+* Array Functions
+  
+    * The slice() method returns the selected elements in an array, as a new array object.
+
+      ```javascript 
+      var fruits = ["Banana", "Orange", "Lemon", "Apple", "Mango"];
+      var newArry = fruits.slice();
+      var first2Elements = fruits.slice(0, 2);
+      ```
+
+    * The splice() method adds/removes items to/from an array, and returns the removed item(s).
+
+      ```javascript
+      array.splice(index,howmany,item1,.....,itemX)
+
+      var fruits = ["Banana", "Orange", "Apple", "Mango"];
+      fruits.splice(2,2);
+
+      //The result of fruits will be: Banana,Orange
+
+      var fruits = ["Banana", "Orange", "Apple", "Mango"];
+      fruits.splice(2,1,"Lemon","Kiwi");
+
+      //The result of fruits will be: Banana,Orange,Lemon,Kiwi,Mango
+
+      ```
+
+    * The unshift() method adds new items to the beginning of an array, and returns the new length.
+
+      ```javascript
+      var fruits = ["Banana", "Orange", "Apple", "Mango"];
+      fruits.unshift("Lemon","Pineapple");
+
+      //The result of fruits will be: Lemon,Pineapple,Banana,Orange,Apple,Mango      
+
+      ```
+
+    * concat()  Joins two or more arrays, and returns a copy of the joined arrays
+    * indexOf() Search the array for an element and returns its position
+    * join()  Joins all elements of an array into a string
+    * lastIndexOf() Search the array for an element, starting at the end, and returns its position
+    * pop() Removes the last element of an array, and returns that element
+    * push()  Adds new elements to the end of an array, and returns the new length
+    * reverse() Reverses the order of the elements in an array
+    * shift() Removes the first element of an array, and returns that element
+    * slice() Selects a part of an array, and returns the new array
+    * sort()  Sorts the elements of an array
+    * splice()  Adds/Removes elements from an array
+    * toString()  Converts an array to a string, and returns the result
+    * unshift() Adds new elements to the beginning of an array, and returns the new length
+    * valueOf() Returns the primitive value of an array
 
 
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
