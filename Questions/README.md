@@ -483,8 +483,31 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     }
   ```
 
+    ```html
+      Techniques that make content accessible to AT.
+      <position:absolute;
+      <clip:rect(1px 1px 1px 1px);
+
+      <position:absolute;left:-999em;
+      <position:absolute;top:-999em;
+      <text-indent:-999em;
+    
+      Techniques that make content inaccessible (invisible to all users).
+      
+      <visibility:hidden; /* in most screen readers*/
+      <display:none;
+
+      overflow:hidden;
+      height:0; /* In VoiceOver */
+  
+
+  ```
+
 
   * Some people have used text-indent or absolute positioning to move the content off the page, but the favorable approach is to use clip: rect(1px, 1px, 1px, 1px); along with some other properties
+
+
+  * clip - What happens if an image is larger than its containing element? - The clip property lets you specify a rectangle to clip an absolutely positioned element. The rectangle is specified as four coordinates, all from the top-left corner of the element to be clipped.
 
 
 * Have you ever used a grid system, and if so, what do you prefer?
