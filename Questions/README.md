@@ -674,6 +674,10 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
         </html>
     ```
 
+* Additional CSS Questions 
+
+    * http://www.thatjsdude.com/interview/css.html
+
 ####[[⬆]](#toc) <a name='js'>JS Questions:</a>
 
 * Explain event delegation
@@ -1130,6 +1134,112 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * valueOf() Returns the primitive value of an array
 
 
+* List every way the browser (using HTML, JS or CSS) can communicate with the server.
+
+    
+    * XHR
+
+    * script tag injection (JSONP)
+    
+    * iframe (crossdomain issues, using postMessage)
+    
+    * websockets
+    
+    * image beacons (new Image()).
+        * Web beacons, also called web bugs and clear GIFs are used in combination with cookies to help people running websites to understand the behaviour of their customers. 
+        * A web beacon is typically a transparent graphic image (usually 1 pixel x 1 pixel) that is placed on a site or in an email.
+        * When a user's browser requests information from a website in this way certain simple information can also be gathered, such as: the IP address of your computer; time the material was viewed; the type of browser that retrieved the image; and the existence of cookies previously set by that server.
+        * Web beacons are typically used by a third-party to monitor the activity of a site.
+
+
+* How are errors gracefully handled in JavaScript?
+    
+    Exceptions that occur at runtime can be handled via try/catch/finally blocks; this allows you to avoid those unfriendly error messages. The finally block is optional, as the bare minimum to use is try/catch. Basically, you try to run code (in the try block between the braces), and execution is transferred to the catch block of code when/if runtime errors occur. When the try/catch block is finally done, code execution transfers to the finally code block. This is the same way it works in other languages like C# and Java.
+
+    ```javascript
+      try {
+
+      // do something
+      } catch (e) {
+      // do something with the exception
+      } finally {
+      // This code block always executes whether there is an exception or not.
+      }
+
+     ```
+    
+    You can give bonus points to any candidate who discusses the onerror event handler tied to the Window object in the browser -- this allows it to monitor all errors on a page. 
+
+    This allows you to properly handle code syntax errors and runtime exceptions.
+
+
+
+* How do JavaScript timers work? What is a drawback of JavaScript timers?
+
+    Timers allow you to execute code at a set time or repeatedly using an interval. 
+
+    This is accomplished with the setTimeout, setInterval, and clearInterval functions. 
+
+    The setTimeout(function, delay) function initiates a timer that calls a specific function after the delay; it returns an id value that can be used to access it later. 
+
+    The setInterval(function, delay) function is similar to the setTimeout function except that it executes repeatedly on the delay and only stops when cancelled. 
+
+    The clearInterval(id) function is used to stop a timer. 
+
+
+
+    Timers can be tricky to use since they operate within a single thread, thus events queue up waiting to execute.
+
+* what is repaint
+    
+    * A repaint occurs when changes are made to an elements skin that changes visibility, but do not affect its layout.
+
+    * Examples of this include outline, visibility, or background color. According to Opera, repaint is expensive because the browser must verify the visibility of all other nodes in the DOM tree.
+
+
+* What is reflow?
+    * Reflow is the process by which the geometry of the layout engine’s formatting objects are computed. 
+
+    * The HTML formatting objects are called frames: a frame corresponds to the geometric information for (roughly) a single element in the content model; 
+    the frames are arranged into a hierarchy that parallels the containment hierarchy in the content model. 
+
+    * A frame is rectangular, with width, height, and an offset from the parent frame that contains it
+
+    * A reflow is even more critical to performance because it involves changes that affect the layout of a portion of the page (or the whole page).
+
+
+* When does reflow happen in a DOM environment?
+
+    * When you add or remove a DOM node.
+    * When you apply a style dynamically (such as element.style.width="10px").
+    * When you retrieve a measurement that must be calculated, such as accessing offsetWidth, clientHeight, or any computed CSS value (via getComputedStyle() in DOM-compliant browsers or currentStyle in IE).
+
+
+
+* enumerable
+
+      A property of an object should be enumerable if you want to be able to have access to it when you iterate through all the objects properties. Example:
+
+      ```javascript
+      var obj = {prop1: 'val1', prop2:'val2'};
+      for (var prop in obj){
+        console.log(prop, obj[prop]);
+      }
+      ```
+
+      In this type of instantiation, enumerable is always true, this will give you an output of:
+
+      prop1 val1
+      prop2 val2
+
+      If you would have used Object.create() like so:
+
+      ```javascript
+      obj = Object.create({}, { prop1: { value: 'val1', enumerable: true}, prop2: { value: 'val2', enumerable: false} });
+      ```
+      your for loop would only access the prop1, not the prop2. Using Object.create() the properties are set with enumerable = false by default.
+
+
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
 
 * Explain "chaining".
@@ -1259,3 +1369,34 @@ foo.push(2);
 * http://css-tricks.com/interview-questions-css/
 * http://davidshariff.com/quiz/
 * http://blog.sourcing.io/interview-questions
+
+
+
+####[[⬆]](#toc) <a name='jscode'>Node.js Questions:</a>
+
+* Node.js on multi-core systems
+
+    * A single instance of Node runs in a single thread. 
+    * To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node processes to handle the load.
+    * Node.js is one-thread-per-process. This is a very deliberate design decision and eliminates the need to deal with locking semantics.
+
+    So how do I take advantage of my 16 core box?
+
+      * For big heavy compute tasks like image encoding, Node.js can fire up child processes or send messages to additional worker processes. In this design, you'd have one thread managing the flow of events and N processes doing heavy compute tasks and chewing up the other 15 CPUs.
+    
+      * For scaling throughput on a webservice, you should run multiple Node.js servers on one box, one per core and split request traffic between them. This provides excellent CPU-affinity and will scale throughput nearly linearly with core count.
+
+
+        ```javascript
+
+        if (cluster.isMaster) {
+          // Fork workers.
+          for (var i = 0; i < numCPUs; i++) {
+            cluster.fork();
+          }
+        } else {
+          http.Server(function(req, res) { ... }).listen(8000);
+        }
+
+        ```
+
