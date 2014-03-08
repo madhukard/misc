@@ -14,25 +14,11 @@ This repo contains a number of front-end interview questions that can be used wh
   1. [CSS Questions](#css)
   1. [JS Questions](#js)
   1. [jQuery Questions](#jquery)
+  1. [Node.js Questions](#nodejs)
   1. [Coding Questions](#jscode)
   1. [Fun Questions](#fun)
   1. [Other Great References](#references)
 
-####[[⬆]](#toc) <a name='contributors'>Original Contributors:</a>
-
-The majority of the questions were plucked from an [oksoclap](http://oksoclap.com/) thread created originally by [Paul Irish](http://paulirish.com) ([@paul_irish](http://twitter.com/paul_irish)) and contributed to by the following individuals:
-
-* [@bentruyman](http://twitter.com/bentruyman) - http://bentruyman.com
-* [@cowboy](http://twitter.com/cowboy) - http://benalman.com
-* [@ajpiano](http://ajpiano) - http://ajpiano.com
-* [@SlexAxton](http://twitter.com/slexaxton) - http://alexsexton.com
-* [@boazsender](http://twitter.com/boazsender) - http://boazsender.com
-* [@miketaylr](http://twitter.com/miketaylr) - http://miketaylr.com
-* [@vladikoff](http://twitter.com/vladikoff) - http://vladfilippov.com
-* [@gf3](http://twitter.com/gf3) - http://gf3.ca
-* [@jon_neal](http://twitter.com/jon_neal) - http://twitter.com/jon_neal
-* [@wookiehangover](http://twitter.com/wookiehangover) - http://wookiehangover.com
-* [@iansym](http://twitter.com/iansym) - http://twitter.com/iansym
 
 ####[[⬆]](#toc) <a name='general'>General Questions:</a>
 
@@ -817,9 +803,15 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
 
 
     * Immediately-Invoked Function Expression (IIFE)
+    
+    * IIFE's are a way of namespacing variables. By default all javascript variables are global and are added to window, if you define them inside a function it stops polution of the global namespace.
+
     * Function Expression - var test = function() {};
+    
     * Function Declaration - function test() {};
+    
     * A function expression can be called (invoked) immediately by using a set of parentheses, but a function declaration cannot be.
+    
     * By wrapping the anonymous function inside of parentheses, the JavaScript parser knows to treat the anonymous function as a function expression instead of a function declaration. 
 
       ```html
@@ -894,6 +886,7 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
     * Native Objects are objects/methods that exist in the ECMAScript spec (Date, Math, String methods, etc.) 
 
     * Host Objects are created by the environment (window, history, getElementByID, etc.) or ones you create yourself.
+
 
 
 * Difference between: `function Person(){}`, `var person = Person()`, and `var person = new Person()`?
@@ -1240,6 +1233,137 @@ The majority of the questions were plucked from an [oksoclap](http://oksoclap.co
       your for loop would only access the prop1, not the prop2. Using Object.create() the properties are set with enumerable = false by default.
 
 
+
+
+* JavaScript Memory Leak
+
+    * JavaScript is a garbage collected language, meaning that memory is allocated to objects upon their creation and reclaimed by the browser when there are no more references to them. 
+
+    * While there is nothing wrong with JavaScript's garbage collection mechanism, it is at odds with the way some browsers handle the allocation and recovery of memory for DOM objects.
+    
+    * Internet Explorer and Mozilla Firefox are two browsers that use reference counting to handle memory for DOM objects. 
+
+    * In a reference counting system, each object referenced maintains a count of how many objects are referencing it. 
+
+    * If the count becomes zero, the object is destroyed and the memory is returned to the heap. 
+
+    * Although this solution is generally very efficient, it has a blind spot when it comes to circular (or cyclic) references.
+
+    * http://msdn.microsoft.com/en-us/library/bb250448(v=vs.85).aspx
+
+    * Circular References 
+
+        * The cause of the leak in this pattern is based on COM reference counting. The script engine objects will hold a reference to the DOM element and will be waiting for any outstanding references to be removed before cleaning up and releasing the DOM element pointer
+
+        ```html
+          <html>
+              <head>
+                  <script language="JScript">
+
+                  var myGlobalObject;
+
+                  function SetupLeak()
+                  {
+                      // First set up the script scope to element reference
+                      myGlobalObject =
+                          document.getElementById("LeakedDiv");
+
+                      // Next set up the element to script scope reference
+                      document.getElementById("LeakedDiv").expandoProperty =
+                          myGlobalObject;
+                  }
+
+
+                  function BreakLeak()
+                  {
+                      document.getElementById("LeakedDiv").expandoProperty =
+                          null;
+                  }
+                  </script>
+              </head>
+
+              <body onload="SetupLeak()" onunload="BreakLeak()">
+                  <div id="LeakedDiv"></div>
+              </body>
+          </html>
+        ```
+
+
+    * Closures
+
+        * Closures are very often responsible for leaks because they create circular references without the programmer being fully aware. 
+
+        * It isn't immediately obvious that parent function parameters and local variables will be frozen in time, referenced, and held until the closure itself is released.
+
+        * With normal circular references there were two solid objects holding references to each other, but closures are different. 
+
+        * Rather than make the references directly, they are made instead by importing information from their parent function's scope. 
+
+        * Normally, a function's local variables and the parameters used when calling a function only exist for the lifetime of the function itself. 
+
+        * With closures, these variables and parameters continue to have an outstanding reference as long as the closure is alive, and since closures can live beyond the lifetime of their parent function so can any of the locals and parameters in that function.
+
+        * In the example, Parameter 1 would normally be released as soon as the function call was over. 
+
+        * Because we've added a closure, a second reference is made, and that second reference won't be released until the closure is also released. 
+
+        * If you happened to attach the closure to an event, then you would have to detach it from that event. 
+
+        * If you happened to attach the closure to an expando then you would need to null that expando.
+
+        * Closures are also created per call, so calling this function twice will create two individual closures, each holding references to the parameters passed in each time. 
+
+        * Because of this transparent nature it is really easy to leak closures.
+
+
+
+        ```html
+
+            <html>
+              <head>
+                  <script language="JScript">
+
+                  function AttachEvents(element)
+                  {
+                      // This structure causes element to ref ClickEventHandler
+                      element.attachEvent("onclick", ClickEventHandler);
+
+                      function ClickEventHandler()
+                      {
+                          // This closure refs element
+                      }
+                  }
+
+                  function SetupLeak()
+                  {
+                      // The leak happens all at once
+                      AttachEvents(document.getElementById("LeakedDiv"));
+                  }
+
+                  function BreakLeak()
+                  {
+                  }
+                  </script>
+              </head\>
+
+              <body onload="SetupLeak()" onunload="BreakLeak()">
+                  <div id="LeakedDiv"></div>
+              </body>
+          </html>
+
+        ```
+
+
+
+* How do you change the style/class on any element?
+
+    ```html
+    document.getElementById(“myText”).style.fontSize = “20″;
+       -or-
+    document.getElementById(“myText”).className = “anyclass”;
+    ```
+
+
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
 
 * Explain "chaining".
@@ -1316,6 +1440,40 @@ $(".foo div#bar:eq(0)")
     * $('#bar')
 
 
+
+
+####[[⬆]](#toc) <a name='nodejs'>Node.js Questions:</a>
+
+* Node.js on multi-core systems
+
+    * A single instance of Node runs in a single thread. 
+    * To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node processes to handle the load.
+    * Node.js is one-thread-per-process. This is a very deliberate design decision and eliminates the need to deal with locking semantics.
+
+    So how do I take advantage of my 16 core box?
+
+      * For big heavy compute tasks like image encoding, Node.js can fire up child processes or send messages to additional worker processes. In this design, you'd have one thread managing the flow of events and N processes doing heavy compute tasks and chewing up the other 15 CPUs.
+    
+      * For scaling throughput on a webservice, you should run multiple Node.js servers on one box, one per core and split request traffic between them. This provides excellent CPU-affinity and will scale throughput nearly linearly with core count.
+
+
+        ```javascript
+
+        if (cluster.isMaster) {
+          // Fork workers.
+          for (var i = 0; i < numCPUs; i++) {
+            cluster.fork();
+          }
+        } else {
+          http.Server(function(req, res) { ... }).listen(8000);
+        }
+
+        ```
+
+
+
+
+
 ####[[⬆]](#toc) <a name='jscode'>Code Questions:</a>
 
 
@@ -1372,31 +1530,4 @@ foo.push(2);
 
 
 
-####[[⬆]](#toc) <a name='jscode'>Node.js Questions:</a>
-
-* Node.js on multi-core systems
-
-    * A single instance of Node runs in a single thread. 
-    * To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node processes to handle the load.
-    * Node.js is one-thread-per-process. This is a very deliberate design decision and eliminates the need to deal with locking semantics.
-
-    So how do I take advantage of my 16 core box?
-
-      * For big heavy compute tasks like image encoding, Node.js can fire up child processes or send messages to additional worker processes. In this design, you'd have one thread managing the flow of events and N processes doing heavy compute tasks and chewing up the other 15 CPUs.
-    
-      * For scaling throughput on a webservice, you should run multiple Node.js servers on one box, one per core and split request traffic between them. This provides excellent CPU-affinity and will scale throughput nearly linearly with core count.
-
-
-        ```javascript
-
-        if (cluster.isMaster) {
-          // Fork workers.
-          for (var i = 0; i < numCPUs; i++) {
-            cluster.fork();
-          }
-        } else {
-          http.Server(function(req, res) { ... }).listen(8000);
-        }
-
-        ```
 
