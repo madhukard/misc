@@ -1252,6 +1252,17 @@ This repo contains a number of front-end interview questions that can be used wh
     * http://msdn.microsoft.com/en-us/library/bb250448(v=vs.85).aspx
 
     * Circular References 
+        * When a DOM object contains a reference to a JavaScript object (such an event handling function), and when that JavaScript object contains a reference to that DOM object, then a cyclic structure is formed. This is not in itself a problem. 
+
+        * At such time as there are no other references to the DOM object and the event handler, then the garbage collector (an automatic memory resource manager) will reclaim them both, allowing their space to be reallocated. 
+
+        * The JavaScript garbage collector understands about cycles and is not confused by them. 
+
+        * Unfortunately, IE's DOM is not managed by JScript. It has its own memory manager that does not understand about cycles and so gets very confused. 
+
+        * As a result, when cycles occur, memory reclamation does not occur. The memory that is not reclaimed is said to have leaked. 
+
+        * Over time, this can result in memory starvation. In a memory space full of used cells, the browser starves to death.
 
         * The cause of the leak in this pattern is based on COM reference counting. The script engine objects will hold a reference to the DOM element and will be waiting for any outstanding references to be removed before cleaning up and releasing the DOM element pointer
 
@@ -1363,6 +1374,185 @@ This repo contains a number of front-end interview questions that can be used wh
     document.getElementById(“myText”).className = “anyclass”;
     ```
 
+
+* Lets say we have multiple links inside the array, and we want to send an ajax request to all of them and get a callback when everything is done.
+
+    var arr = ['/url1', '/url2' /* , … */ ];  
+    
+    If the candidate uses promises, ask how it could be done without them.
+
+
+    ```javascript
+      
+      $.when($.ajax(...), $.ajax(...)).then(function (resp1, resp2) {
+          //this callback will be fired once all ajax calls have finished.
+      });
+
+      var sync = {
+       callbacksToComplete = 3,
+       callbacksCompleted = 0,
+       addCallbackInstance = function(){
+        this.callbacksCompleted++;
+        if(callbacksCompleted == callbacksToComplete) {
+         doFinalCallBack();
+        }
+       }
+      };    
+    ```
+
+*  What’s the result of:  typeof typeof(null)
+
+    type(null) ==> "object"
+
+    type type(null) ==> "string"
+
+    * typeof always returns a string. Therefore typeof typeof thing is "string".
+
+
+* typeof foo == 'undefined' & typeof foo === 'undefined' 
+
+  * true
+
+
+* What’s the result of: 100['toString']['length']
+
+  * 1
+
+    * We have a case of access to property by square brackets. The left side is a numerical value and automatically become an object of class Number (autoboxing). Then
+  100['toString']['length'] ---> (new Number(100)).toString.length
+  
+    * For a function, the value of the length property is usually an integer that indicates the "typical" number of arguments expected by the function. For Number.prototype.toString this value is 1.
+
+
+* What’s the result of: var a = (1,5 - 1) * 2
+  
+  * 8
+
+  * var a = (1, 3, 4)  ==> a = 4
+
+  * The comma operator returns the value of its last expression:
+      var a = (1,5 - 1) * 2  ---->  var a = (5 - 1) * 2 ----> var a = 4*2
+
+* What’s the result of:
+  
+    ```javascript
+        var x = 10;
+        var foo = {
+          x: 20,
+          bar: function () {
+            var x = 30;
+            return this.x;
+          }
+        };
+         
+        console.log(
+          foo.bar(),
+          (foo.bar)(),
+          (foo.bar = foo.bar)(),
+          (foo.bar, foo.bar)()
+        );    
+
+  ```
+
+
+    * 20, 20, 10, 10
+
+    * The local variable x in function's body is never used, therefore the code is equivalent to
+      var foo = {
+        x: 20,
+        bar: function () {return this.x;}
+      };
+
+      foo.bar()
+      foo.bar is a reference with base object foo and whose property name is bar: a reference to the function bar of foo. When function is called with foo.bar() the this is 
+      foo and then the result is 20.
+      
+
+      (foo.bar)()
+      foo.bar is a reference and then (foo.bar) is the same reference.
+      
+      (foo.bar)() <----> foo.bar()
+      
+      (foo.bar = foo.bar)()
+      The assignment returns a value, not a reference, a function value foo.bar. Then when the call is made the this value is null and the global object is used. Result is 10.
+      
+
+      (foo.bar, foo.bar)()
+      The comma operator returns the value of its last expression, the value of foo.bar. Again the result is 10.
+
+
+* What’s the result of:
+
+  ```javascript
+      function f(x, y) {
+        x = 10;
+        console.log(
+          arguments[0],
+          arguments[1]
+        );
+      }
+       
+      f();
+  ```
+
+    * undefined, undefined
+
+    * For each actual parameter value supplied a property is created in arguments object. If the caller does not pass parameter values, arguments object will no link with the formal parameters of the function. Furthermore arguments.length will be zero.
+
+
+
+* What’s the result of:
+
+  ```javascript
+    var
+      b = 10,
+      c = (
+        20,
+        function (x) { return x + 100},
+        function () { return arguments[0]}
+      );
+     
+    a = b + c
+    ({x: 10}).x
+
+  ```
+
+    * 20
+
+
+* What’s the result of: 1..z
+
+    * undefined
+
+    * 1. is a valid number literal equivalent to 1.0, then
+      1..z  ----> 1.0['z'] ----> (new Number(1.0))['z']
+      Number.prototype.z don't exist, the result is undefined
+
+
+
+* What’s the result of:
+
+    ```javascript
+      ({
+        x: 10,
+        foo: function () {
+          function bar() {
+            console.log(x);
+            console.log(y);
+            console.log(this.x);
+          }
+          with (this) {
+            var x = 20;
+            var y = 30;
+            bar.call(this);
+          }
+        }
+      }).foo();
+
+    ```
+
+
+    * undefined, 30, 20
 
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
 
