@@ -1554,6 +1554,31 @@ This repo contains a number of front-end interview questions that can be used wh
 
     * undefined, 30, 20
 
+
+* What is label Statement
+
+    * A label provides a statement with an identifier that lets you refer to it elsewhere in your program. For example, you can use a label to identify a loop, and then use the break or continue statements to indicate whether a program should interrupt the loop or continue its execution.
+
+        The syntax of the label statement looks like the following:
+
+
+        label :
+            statement
+      
+
+      The value of label may be any JavaScript identifier that is not a reserved word. The statement that you identify with a label may be any statement.
+
+      Example
+      In this example, the label markLoop identifies a while loop.
+
+       ```javascript 
+        markLoop:
+        while (theMark == true) {
+           doSomething();
+        }
+      ```
+      
+
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
 
 * Explain "chaining".
