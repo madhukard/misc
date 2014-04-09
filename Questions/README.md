@@ -1577,6 +1577,12 @@ This repo contains a number of front-end interview questions that can be used wh
            doSomething();
         }
       ```
+
+* You can turn your browser into a notepad by pasting the following in the URL bar and hitting Return key.
+
+      ```html
+      data:text/html, <html contenteditable>
+      ```
       
 
 ####[[⬆]](#toc) <a name='jquery'>jQuery Questions:</a>
@@ -1742,7 +1748,8 @@ foo.push(2);
 * http://css-tricks.com/interview-questions-css/
 * http://davidshariff.com/quiz/
 * http://blog.sourcing.io/interview-questions
-
+* http://www.quora.com/Web-Development/What-are-the-most-interesting-HTML-JS-DOM-CSS-hacks-that-most-web-developers-dont-know-about?utm_source=html5weekly&utm_medium=email
+* 
 
 
 
